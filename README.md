@@ -22,4 +22,4 @@ https://code.google.com/archive/p/wintee/downloads
 
 
 # FAQ / How to use
-<a href="FAQ"><strong> How to use and FAQ </strong></a>
+<a href="FAQ.md"><strong> How to use and FAQ </strong></a>
