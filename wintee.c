@@ -33,7 +33,6 @@
     coincidence and strictly a case of "great minds think alike".
 */
 
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <io.h>
@@ -52,7 +51,7 @@
 #define AUTHORS "Ryan Buhl"
 #define AUTHOR_CONTACT "rbuhl@point2.com"
 
-int open_outfile(int argc, char*argv[]);
+int open_outfile(int argc, char *argv[]);
 int get_opt(int argc, char *argv[]);
 
 int output_to_stdout = FALSE;
@@ -63,20 +62,21 @@ int show_help = FALSE;
 /* Need list to keep track of the file handles opened for output so we can
     close them when we're done */
 
-TAILQ_HEAD(tailhead, entry) head;
-struct tailhead *headp;  /* Tail Queue head */
-struct entry             /* Tail Queue entry node */
+TAILQ_HEAD(tailhead, entry)
+head;
+struct tailhead *headp; /* Tail Queue head */
+struct entry            /* Tail Queue entry node */
 {
     int outfile;
-    TAILQ_ENTRY(entry) entries; /* Tail Queue */
+    TAILQ_ENTRY(entry)
+    entries; /* Tail Queue */
 };
 
 /*
     Function to display usage information to the user so they know how this
         application works.
 */
-void
-display_help(void)
+void display_help(void)
 {
     printf("Usage: wtee [OPTION]... [FILE]...\n");
     printf("Copy standard input to each FILE, and also to standard output\n\n");
@@ -92,8 +92,7 @@ display_help(void)
 /**
     Function to display version and bug contact information
 */
-void
-display_version(void)
+void display_version(void)
 {
     printf("wtee %s\n", VERSION);
     printf("There is NO WARRANTY, to the extent permitted by law.\n");
@@ -130,45 +129,44 @@ int get_opt(int argc, char *argv[])
         p = base_arg[i];
         switch (*p)
         {
-            default:
-                break;
-            case '-':
-                ++p;
-                while (*p)
+        default:
+            break;
+        case '-':
+            ++p;
+            while (*p)
+            {
+                switch (*p)
                 {
-                    switch (*p)
+                default:
+                    result = 1;
+                    break;
+                case 'a':
+                    append_files = TRUE;
+                    processed_parameter = TRUE;
+                    break;
+                case 'i':
+                    disable(); /* disable interrupts */
+                    processed_parameter = TRUE;
+                    break;
+                case '?':
+                    display_help();
+                    exit(0);
+                    break;
+                case '-':
+                    p++;
+                    if (!stricmp(p, "version"))
                     {
-                        default:
-                            result = 1;
-                            break;
-                       case 'a':
-                            append_files = TRUE;
-                            processed_parameter = TRUE;
-                            break;
-                       case 'i':
-                            disable(); /* disable interrupts */
-                            processed_parameter = TRUE;
-                       	    break;
-                       case '?':
-                       	    display_help();
-                            exit(0);
-                            break;
-                       case '-':
-                            p++;
-                            if (!stricmp(p, "version"))
-                            {
-                                display_version();
-                                exit(0);
-                            }
-                            else if (!stricmp(p, "help"))
-                            {
-                                display_help();
-                                exit(0);
-                            }
-                   }
-                   p++;
-
+                        display_version();
+                        exit(0);
+                    }
+                    else if (!stricmp(p, "help"))
+                    {
+                        display_help();
+                        exit(0);
+                    }
                 }
+                p++;
+            }
             continue;
         }
     }
@@ -185,14 +183,14 @@ int get_opt(int argc, char *argv[])
     @returns 0 if all streams were opened and added to the stream list;
             Non-zero on failure.
 */
-int
-open_outfile(int argc, char *argv[])
+int open_outfile(int argc, char *argv[])
 {
     char **base_v = argv, *p;
     int i;
     struct entry *n;
     int list_count = 0;
-    argc--; base_v++;
+    argc--;
+    base_v++;
 
     while (argc--)
     {
@@ -240,8 +238,7 @@ open_outfile(int argc, char *argv[])
 
     @returns 0 if there were no problems writing to the stream; Non-zero if errors occured.
 */
-int
-write_to_file(int file, char *buffer, int bytes_to_write)
+int write_to_file(int file, char *buffer, int bytes_to_write)
 {
     int bytes_written, total_written = 0;
     char *p = buffer;
@@ -260,10 +257,9 @@ write_to_file(int file, char *buffer, int bytes_to_write)
     return bytes_to_write - total_written;
 }
 
-int
-main(int argc, char *argv[])
+int main(int argc, char *argv[])
 {
-    char buf[MAX_BUF_SIZE +1] = {0};
+    char buf[MAX_BUF_SIZE + 1] = {0};
     int bytes_read;
     int STDIN, STDOUT;
     int redirect;
@@ -281,7 +277,7 @@ main(int argc, char *argv[])
     /* while input, output */
     while (0 < (bytes_read = read(STDIN, buf, MAX_BUF_SIZE)))
     {
-        for (np=head.tqh_first; np != NULL; np = np->entries.tqe_next)
+        for (np = head.tqh_first; np != NULL; np = np->entries.tqe_next)
             write_to_file(np->outfile, buf, bytes_read);
 
         /* now write to the display */
